@@ -1,0 +1,10 @@
+Redondear y truncar un numero en python (https://mail.python.org/pipermail/python-es/2008-November/023144.html
+
+ a = 2
+ b = 3
+ round (a*1.0/b,2)
+ 0.67000000000000004
+ print '%.2f' % round (a*1.0/b,2)
+ 0.67
+
+FUNCIONES (http://librosweb.es/libro/python/capitulo_4/definiendo_funciones.html
