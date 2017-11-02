@@ -1,132 +1,162 @@
 class MaquinaExpendedora(object):
 
     _total = 0
-    def __init__(self,producto,precio):
-        self.__precio = precio
-        self.producto=producto
-        self.__cantidad=0
+
+    def __init__(self):
+        self.__productos = {'Palomitas': (1, 10),
+                            'Pipas'    : (1, 8),
+                            'Doritos'  : (1, 9),
+                            'Fanta'    : (1.5, 10),
+                            'CocaCola' : (2, 7),
+                            'Cafe'     : (0.4, 10),
+                            'Aquarius' :(1.5,10)}
+        self.__importe = 0
+        self.__precio = 0
+
 
     def _getimporte(self):
-        return getattr(self, "_MaquinaExpendedora__importe")
-    def _setimporte(self,importe):
-        setattr(self,"_MaquinaExpendedora__importe", importe)
+        return getattr(self,"_MaquinaExpendedora__importe")
+
+
+    def _setimporte(self, importe):
+        setattr(self, "_MaquinaExpendedora__importe", importe)
+
 
     def _getprecio(self):
-        return getattr(self, "_MaquinaExpendedora__precio")
-    def _setprecio(self,precio):
-        setattr(self, "_MaquinaExpendedora__precio",precio)
+        return getattr(self,"_MaquinaExpendedora__precio")
+
+    def _setprecio(self, precio):
+        setattr(self,"_MaquinaExpendedora__precio",precio)
+
+
+    def _getproductos(self):
+        return getattr(self, "_MaquinaExpendedora__productos")
+
+    productos = property(fget=_getproductos)
+    importe = property(fget=_getimporte, fset=_setimporte)
+    precio = property(fget=_getprecio, fset=_setprecio)
 
     @staticmethod
-    def getTotal():
+    def gettotal():
         return getattr(MaquinaExpendedora, "_total")
-    def setTotal(valor):
+
+    @staticmethod
+    def settotal(valor):
         setattr(MaquinaExpendedora, "_total", valor)
 
-    precio = property(fget=_getprecio, fset=_setprecio)
-    importe = property(fget=_getimporte, fset=_setimporte)
+    def mostrarproduc(self):
+        prod = self.productos.keys()
+        for p in prod:
+            datos = self.productos[p]
+            precio = datos[0]
+            unidades = datos[1]
+            print("{}".format(p))
+            print("Precio:{} € Unidades: {}".format(precio,unidades))
+        print("")
 
-    def comprarproducto(self):
-        if self.producto == "apagar":
-            self.apagar()
+    def stockproducto(self, nomprod):
+        if nomprod in self.productos:
+            return True
         else:
-            pass
-    def getcantidad(self):
-        return self.__cantidad
-
-    def apagar(self):
-        if (self.producto == 0):
-            self.precio=0
-            self.__cantidad=0
+            print("No tenemos ese producto")
+            return False
 
 
-    def insertar_dinero(self, cantidad):
-            # Este assert y el siguiente se controlan en el tercer while del main
-            assert (cantidad > 0), "Introduzca cantidad positiva"
-            self.importe = self.importe + cantidad
-            dev = self.precio - self.importe
-            assert self.precio <= self.importe, ("Dinero insuficiente, le faltan {}".format(dev))
+    def precioproducto(self, nom_prod):
+        return self.productos[nom_prod][0]
+
+    def unidadesproducto(self, nom_prod):
+        return self.productos[nom_prod][1]
+
+    def comprobarunidades(self, nom_prod, unid):
+        uni = self.unidadesproducto(nom_prod)
+        if uni < unid:
+            print("Quedan {} unidades de {}.".format(uni,nom_prod))
+            return False
+        self.restarunidades(nom_prod, unid)
+        return True
+
+    def restarunidades(self, nom_prod, unidades):
+        precio = self.precioproducto(nom_prod)
+        uni = self.unidadesproducto(nom_prod) - unidades
+        lis = (precio, uni)
+        self.productos.pop(nom_prod)
+        self.productos.setdefault(nom_prod, lis)
+
+    def insertar_dinero(self, nom_prod, unidades, importe):
+        assert (importe > 0), "Introduzca importe > 0"
+        self.importe = self.importe + importe
+        self.precio = self.precioproducto(nom_prod) * unidades
+        d = self.precio-self.importe
+        assert self.precio <= self.importe, ("Le faltan {} euros".format(d))
 
     def imprimir_ticket(self):
-            if self.importe >= self.precio:
-                print("Imprimiendo ticket .... Ha introducido {}".format(self.importe))
-                tot = self.getTotal()
-                tot = tot + self.precio
-                MaquinaExpendedora.setTotal(tot)
+        if self.importe >= self.precio:
+            print("Imprimiendo ticket..... Ha introducido {} €".format(self.importe))
+            tot = MaquinaExpendedora.gettotal()
+            tot = tot + self.precio
+            MaquinaExpendedora.settotal(tot)
+            self.devolver_cambios()
+            return True
+        else:
+            self.cantidad_pendiente()
+            return False
 
-                # Devolver los cambios
-                self.devolver_cambios()
-                # ponemos _importe a 0 para que no acumule el dinero metido desde el principio
-                self.__importe = 0
-                return True
 
-            else:
-                self.cantidad_pendiente()
-                return False
+    def devolver_cambios(self):
+        print("Que aproveche :) No se olvide de su cambio : {}".format(self.importe-self.precio))
+        print()
 
-        def devolver_cambios(self):
-            print("Que aproveche :) No se olvide de su cambio: {}".format(self.importe - self.precio))
+    def cantidad_pendiente(self):
+        print("Introduzca más dinero, le faltan {} euros".format(self.precio-self.importe))
 
-        def cantidad_pendiente(self):
-            print("No ha introducido dinero suficiente, le faltan {}".format(self.precio - self.importe))
-
-        def vaciar_maquina(self):
-            print("Total recaudado por la máquina {}".format(self.getTotal()))
-            print("Vaciando máquina...")
-
-            # Ponemos a 0 la maquina
-            MaquinaExpendedora.setTotal(0)
-            print("Máquina vaciada {}".format(MaquinaExpendedora.getTotal()))
+    def vaciar_maquina(self):
+        print("Total recaudado por la máquina {}".format(MaquinaExpendedora.gettotal()))
+        print("Vaciando máquina...")
+        MaquinaExpendedora.settotal(0)
+        print("Máquina vaciada {}".format(MaquinaExpendedora.gettotal()))
 
 def main():
-    m = MaquinaExpendedora(0,0)
+    m = MaquinaExpendedora()
+
+    m.mostrarproduc()
+
+    nombre = input("Introduzca nombre del producto a comprar: ").title()
+
+    while True:
+        if m.stockproducto(nombre):
+            break
 
     while True:
         try:
-            produc = int(input("¿Qué producto quiere?"))
-            assert (produc > 0), "Los productos pedidos tienen que ser >= 0"
-            break
+            unidades = int(input("¿Cuántas unidades quieres comprar?"))
+            assert (unidades > 0), "Debe comprar minimo una unidad del producto"
+            if m.comprobarunidades(nombre, unidades):
+                break
         except ValueError:
-            print("Debe introducidor numero")
+            print("Debe introducir numero")
         except AssertionError as err:
             print(err)
-    for i in range(1, produc + 1):
-        while True:
-            try:
-                precio = float(input("Cafe {}. Teclee su precio: ".format(i)))
-                assert (precio > 0), "Introduzca cantidad positiva"
-                print("Supongo que quiere 1 producto y cuesta {}".format(float(precio)))
-                m.precio = precio
-                break
-                # en caso de otra cosa q no sea numero
-            except ValueError:
-                print("Debe introducir numero")
-                # si el precio es menor que 0
-            except AssertionError as err:
-                print(err)
 
-        while True:
-            try:
-                cant = float(input("¿Cuanto dinero mete en la máquina? "))
-                m.insertar_dinero(cant)
-                break
-            # en caso de otra cosa q no sea numero
-            except ValueError:
-                print("Debe introducir número")
-            # en caso de que falte dinero por introducir o sea numero negativo (assert lineas 26 y 30)
-            except AssertionError as err:
-                print(err)
-        # imprimimos el ticket con la instancia creada m llamando al metodo imprimir_ticket
-        m.imprimir_ticket()
-        # vaciamos la maquina con la instancia creada m llamando al metodo vaciar_maquina
+    precio = m.precioproducto(nombre) * unidades
+    print("Va ha comprar {} unidadades de {} a {} €".format(unidades,nombre, precio))
+
+    while True:
+        try:
+            impor = float(input("¿Cuánto dinero mete en la máquina? "))
+            m.insertar_dinero(nombre, unidades, impor)
+            break
+        except ValueError:
+            print("Debe introducir numero")
+        except AssertionError as err:
+            print(err)
+
+    m.imprimir_ticket()
+    m.mostrarproduc()
     m.vaciar_maquina()
 
 if __name__ == "__main__":
-        main()
-
-
-
-
-
+    main()
 
 
 
