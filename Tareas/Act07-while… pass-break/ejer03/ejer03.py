@@ -1,4 +1,4 @@
-class Grados: #REV
+class Grados:
 
     def __init__(self,centigrados, farenheit):
         self.centigrados = centigrados
@@ -8,17 +8,21 @@ class Grados: #REV
     def afarenheit(self):
         return (self.centigrados *9 /5) + 32
 
-cont_temp = 0
-grados10 = 10
 
-while True:
-    if cont_temp == 12:
+
+def main():
+    cont_temp = 0
+    grados10 = 10
+    while True:
+        if cont_temp == 12:
             break
-    grad = Grados(0,grados10)
-    print("{} F = {:.5} C".format(grados10,grad.acentigrados())) #{:.5} es para decirle cuantos num queremos imprimir
-    grados10 += 10
-    cont_temp += 1
-print("Total de temperaturas convertidas:" , cont_temp)
+        grad = Grados(0,grados10)
+        print("{} F = {:.5} C".format(grados10,grad.acentigrados())) #{:.5} es para decirle cuantos num queremos imprimir
+        grados10 += 10
+        cont_temp += 1
+    print("Total de temperaturas convertidas:" , cont_temp)
+if __name__ == '__main__':
+    main()
 
 
 
