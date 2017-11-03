@@ -12,3 +12,4 @@ if len(usuario) > 12:
     valido = False
 if valido:
     print ("Usuario validado")
+    #valido = True

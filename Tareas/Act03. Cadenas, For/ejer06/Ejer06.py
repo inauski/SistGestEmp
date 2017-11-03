@@ -20,3 +20,5 @@ if esvalido():
     print ("Contraseña valida")
 else:
     print ("La contraseña elegida no es segura")
+
+#ej: Hola123-4  valida

@@ -3,7 +3,7 @@ frase = input("Escribe una frase: ")
 if frase.isalnum():
     print ("%s es alfanumérica, números y letras" % frase)
 if frase.isalpha():
-    print ("%s es alfabética" % frase)
+    print ("%s es alfabética" % frase) #alfabetica=letra
 if frase.isdigit():
     print ("%d es un número" % float(frase))
 if frase.islower():
